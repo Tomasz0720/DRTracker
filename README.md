@@ -8,6 +8,9 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Last Commit](https://img.shields.io/github/last-commit/Tomasz0720/DRTracker)
 ![Issues](https://img.shields.io/github/issues/Tomasz0720/DRTracker)
+![Python](https://img.shields.io/badge/Python-3.12.8-blue)
+![Flask](https://img.shields.io/badge/Flask-3.1.1-cyan)
+![Leaflet](https://img.shields.io/badge/Leaflet.js-map-green)
 
 ### Description
 DRTracker is a site that uses Durham Region Transit's live vehicle location feed to track buses in real time.
