@@ -117,9 +117,9 @@ async function loadStops() {
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
         return L.circleMarker(latlng, {
-          radius: 1.5,
-          color: 'black',
-          fillColor: 'black',
+          radius: 1,
+          color: 'grey',
+          fillColor: 'grey',
           fillOpacity: 1
         });
       },
