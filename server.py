@@ -8,6 +8,28 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+@app.route('/routes')
+def get_routes():
+    try:
+        feed = gtfs_realtime_pb2.FeedMessage()
+        url = 'https://drtonline.durhamregiontransit.com/gtfsrealtime/VehiclePositions'
+        response = requests.get(url)
+        response.raise_for_status()
+        feed.ParseFromString(response.content)
+        
+        route_ids = set()
+        for entity in feed.entity:
+            if entity.HasField('vehicle') and entity.vehicle.HasField('trip'):
+                route_id = entity.vehicle.trip.route_id
+                if route_id:
+                    route_ids.add(route_id)
+                    
+        print(f"Detected route IDs: {sorted(list(route_ids))}", flush=True)
+        return jsonify(sorted(list(route_ids)))
+    except Exception as e:
+        print(f"Error fetching or parsing feed: {e}")
+        return jsonify([])
+
 @app.route('/vehicles')
 def get_vehicles():
     try:

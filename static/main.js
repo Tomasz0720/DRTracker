@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 //Track bus data
 const buses = {};
-const fetchInterval = 10000; //10 seconds
+const fetchInterval = 5000; //5 seconds
 
 async function fetchBusData() {
   try {
@@ -88,19 +88,29 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-
+//Load routes from JSON files
 async function loadRoutes() {
   try {
-    const res = await fetch('/static/routes.geojson');
-    const data = await res.json();
+    const geoRes = await fetch('/static/routes.geojson');
+    const jsonRes = await fetch('/static/routes.json');
+    const geoData = await geoRes.json();
+    const routeList = await jsonRes.json();
 
-    L.geoJSON(data, {
-      style: {
-        color: 'red',
-        weight: 3
+    const routeColorMap = {};
+    routeList.forEach(route => {
+      routeColorMap[route.id] = route.color;
+    });
+
+    L.geoJSON(geoData, {
+      style: feature => {
+        const routeId = String(feature.properties.route_id);
+        return {
+          color: routeColorMap[routeId] || 'red',
+          weight: 3
+        };
       },
       onEachFeature: (feature, layer) => {
-        const routeId = feature.properties.route_id || "Unknown";
+        const routeId = String(feature.properties.route_id);
         layer.bindPopup(`Route ${routeId}`);
       }
     }).addTo(map);
@@ -117,9 +127,9 @@ async function loadStops() {
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
         return L.circleMarker(latlng, {
-          radius: 1,
-          color: 'grey',
-          fillColor: 'grey',
+          radius: 1.75,
+          color: 'white',
+          fillColor: 'white',
           fillOpacity: 1
         });
       },
@@ -133,11 +143,8 @@ async function loadStops() {
   }
 }
 
-
-
-
-loadRoutes();
-loadStops();
 fetchBusData();
 setInterval(fetchBusData, fetchInterval);
 animate();
+loadRoutes();
+loadStops();

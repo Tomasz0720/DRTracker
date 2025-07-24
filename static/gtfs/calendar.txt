@@ -1,0 +1,5 @@
+service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+Canada Day,0,0,0,0,0,0,0,20250623,20250901
+Overnight,1,1,1,1,1,1,1,20250623,20250901
+SatSun,0,0,0,0,0,1,1,20250623,20250901
+Weekday,1,1,1,1,1,0,0,20250623,20250901

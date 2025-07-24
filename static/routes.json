@@ -1,0 +1,268 @@
+[
+  {
+    "id": "100",
+    "short_name": "100",
+    "long_name": "Route 100",
+    "color": "#734D2C",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "101",
+    "short_name": "101",
+    "long_name": "Route 101",
+    "color": "#9587B5",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "112",
+    "short_name": "112",
+    "long_name": "Route 112",
+    "color": "#2874B9",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "118",
+    "short_name": "118",
+    "long_name": "Route 118",
+    "color": "#E72E2E",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "121",
+    "short_name": "121",
+    "long_name": "Route 121",
+    "color": "#2BA9AC",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "211",
+    "short_name": "211",
+    "long_name": "Route 211",
+    "color": "#90C54D",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "216",
+    "short_name": "216",
+    "long_name": "Route 216",
+    "color": "#2CADEB",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "224",
+    "short_name": "224",
+    "long_name": "Route 224",
+    "color": "#E8387B",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "227",
+    "short_name": "227",
+    "long_name": "Route 227",
+    "color": "#2C388D",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "301",
+    "short_name": "301",
+    "long_name": "Route 301",
+    "color": "#90C54D",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "302",
+    "short_name": "302",
+    "long_name": "Route 302",
+    "color": "#E72E2E",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "306",
+    "short_name": "306",
+    "long_name": "Route 306",
+    "color": "#2CADEB",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "319",
+    "short_name": "319",
+    "long_name": "Route 319",
+    "color": "#31515E",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "392",
+    "short_name": "392",
+    "long_name": "Route 392",
+    "color": "#734D2C",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "403",
+    "short_name": "403",
+    "long_name": "Route 403",
+    "color": "#90C54D",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "405",
+    "short_name": "405",
+    "long_name": "Route 405",
+    "color": "#16663B",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "407",
+    "short_name": "407",
+    "long_name": "Route 407",
+    "color": "#E6228B",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "409",
+    "short_name": "409",
+    "long_name": "Route 409",
+    "color": "#EB6990",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "410",
+    "short_name": "410",
+    "long_name": "Route 410",
+    "color": "#CFA234",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "411",
+    "short_name": "411",
+    "long_name": "Route 411",
+    "color": "#2874B9",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "419",
+    "short_name": "419",
+    "long_name": "Route 419",
+    "color": "#2CADEB",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "421",
+    "short_name": "421",
+    "long_name": "Route 421",
+    "color": "#9587B5",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "423",
+    "short_name": "423",
+    "long_name": "Route 423",
+    "color": "#5E3918",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "502",
+    "short_name": "502",
+    "long_name": "Route 502",
+    "color": "#E6228B",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "507",
+    "short_name": "507",
+    "long_name": "Route 507",
+    "color": "#29A556",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "605",
+    "short_name": "605",
+    "long_name": "Route 605",
+    "color": "#243F97",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "618",
+    "short_name": "618",
+    "long_name": "Route 618",
+    "color": "#E6228B",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "900",
+    "short_name": "900",
+    "long_name": "PULSE 900",
+    "color": "#D86D34",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "901",
+    "short_name": "901",
+    "long_name": "PULSE 901",
+    "color": "#D86D34",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "902",
+    "short_name": "902",
+    "long_name": "Route 902",
+    "color": "#2CADEB",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "905",
+    "short_name": "905",
+    "long_name": "Route 905",
+    "color": "#2BA9AC",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "915",
+    "short_name": "915",
+    "long_name": "PULSE 915",
+    "color": "#D86D34",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "916",
+    "short_name": "916",
+    "long_name": "PULSE 916",
+    "color": "#D86D34",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "917",
+    "short_name": "917",
+    "long_name": "Route 917",
+    "color": "#8D2C8C",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "920",
+    "short_name": "920",
+    "long_name": "Route 920",
+    "color": "#5B1568",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "921",
+    "short_name": "921",
+    "long_name": "Route 921",
+    "color": "#326A53",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "N1",
+    "short_name": "N1",
+    "long_name": "Route N1",
+    "color": "#EE7F34",
+    "text_color": "#ffffff"
+  },
+  {
+    "id": "N2",
+    "short_name": "N2",
+    "long_name": "Route N2",
+    "color": "#1254A2",
+    "text_color": "#ffffff"
+  }
+]

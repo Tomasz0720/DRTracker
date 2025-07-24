@@ -1,0 +1,7 @@
+service_id,date,exception_type
+Weekday,20250701,2
+Canada Day,20250701,1
+Weekday,20250804,2
+SatSun,20250804,1
+Weekday,20250901,2
+SatSun,20250901,1
