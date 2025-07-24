@@ -1,4 +1,4 @@
-const map = L.map('map').setView([43.7, -79.4], 12);
+const map = L.map('map').setView([43.7, -79.4], 12); //CHANGE TO GET USERS LOCATION
 
 //Add OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -8,6 +8,70 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 //Track bus data
 const buses = {};
 const fetchInterval = 5000; //5 seconds
+
+let userLocationMarker = null;
+let watchId = null;
+
+const getUserLocation = () => {
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+
+      map.setView([lat, lon], 14);
+
+      if(userLocationMarker){
+        map.removeLayer(userLocationMarker);
+      }
+
+      userLocationMarker = L.circleMarker([lat, lon], {
+        radius: 8,
+        color: 'red',
+        fillColor: 'red',
+        fillOpacity: 1,
+        weight: 2
+      }).addTo(map).bindPopup('Your Location');
+
+      console.log('User Location:', lat, lon);
+
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const newLat = position.coords.latitude;
+          const newLon = position.coords.longitude;
+
+          userLocationMarker.setLatLng([newLat, newLon]);
+          console.log('Location Updated:', newLat, newLon);
+        },
+        (error) => {
+          console.error('Error watching position:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    },
+    (error) => {
+      console.error('Error getting initial position:', error);
+      alert("Unable to retrieve your location. Using default view");
+    });
+  }
+  else{
+    alert("Geolocation is not supported by this browser.")
+  }
+}
+
+const stopLocationTracking = () => {
+  if(watchId !== null){
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+  }
+  if(userLocationMarker){
+    map.removeLayer(userLocationMarker);
+    userLocationMarker = null;
+  }
+}
 
 async function fetchBusData() {
   try {
@@ -127,9 +191,9 @@ async function loadStops() {
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
         return L.circleMarker(latlng, {
-          radius: 1.75,
-          color: 'white',
-          fillColor: 'white',
+          radius: 2.5,
+          color: 'black',
+          fillColor: 'black',
           fillOpacity: 1
         });
       },
@@ -148,3 +212,4 @@ setInterval(fetchBusData, fetchInterval);
 animate();
 loadRoutes();
 loadStops();
+getUserLocation();
