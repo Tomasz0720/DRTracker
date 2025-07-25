@@ -1,6 +1,10 @@
 from flask import Flask, render_template, jsonify
 from google.transit import gtfs_realtime_pb2
 import requests
+import time
+import json
+from datetime import datetime
+import threading
 
 app = Flask(__name__)
 
@@ -73,5 +77,62 @@ def get_vehicles():
         return jsonify([])
 
 
+
+FEED_URL = "https://drtonline.durhamregiontransit.com/gtfsrealtime/TripUpdates"
+OUTPUT_FILE = "static/trip_updates_by_stop.json"
+UPDATE_INTERVAL = 300000  # 5 minutes in milliseconds
+
+def fetch_trip_updates():
+    response = requests.get(FEED_URL)
+    feed = gtfs_realtime_pb2.FeedMessage()
+    feed.ParseFromString(response.content)
+
+    #Create structure organized by stop_id
+    stop_updates = {}
+
+    for entity in feed.entity:
+        if not entity.HasField("trip_update"):
+            continue
+
+        trip_id = entity.trip_update.trip.trip_id
+        route_id = entity.trip_update.trip.route_id
+
+        for stop_time_update in entity.trip_update.stop_time_update:
+            stop_id = stop_time_update.stop_id
+            if stop_time_update.HasField("arrival"):
+                arrival_time = stop_time_update.arrival.time  # epoch seconds
+            elif stop_time_update.HasField("departure"):
+                arrival_time = stop_time_update.departure.time
+            else:
+                continue
+
+            entry = {
+                "trip_id": trip_id,
+                "route_id": route_id,
+                "arrival": arrival_time
+            }
+
+            stop_updates.setdefault(stop_id, []).append(entry)
+
+    #Save to file
+    with open(OUTPUT_FILE, "w") as f:
+        json.dump(stop_updates, f, indent=2)
+
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Trip updates saved.")
+
+def run_updater():
+    while True:
+        try:
+            fetch_trip_updates()
+        except Exception as e:
+            print("Error updating trip data:", e)
+        time.sleep(UPDATE_INTERVAL)
+
+
 if __name__ == '__main__':
+    #Start trip_updates_by_stop.json updater in a separate thread
+    updater_thread = threading.Thread(target=run_updater, daemon=True)
+    updater_thread.start()
+
+    #Start the Flask app
     app.run(debug=True)

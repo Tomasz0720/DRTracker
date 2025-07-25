@@ -1,4 +1,4 @@
-const map = L.map('map').setView([43.7, -79.4], 12); //CHANGE TO GET USERS LOCATION
+const map = L.map('map').setView([43.7, -79.4], 12); //Default view, will be updated to user's location
 
 //Add OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -9,9 +9,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const buses = {};
 const fetchInterval = 5000; //5 seconds
 
+//Initialize user location marker and watch ID
 let userLocationMarker = null;
 let watchId = null;
 
+//Get user's current location and start tracking
 const getUserLocation = () => {
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition((position) => {
@@ -62,6 +64,7 @@ const getUserLocation = () => {
   }
 }
 
+//Stop tracking user location
 const stopLocationTracking = () => {
   if(watchId !== null){
     navigator.geolocation.clearWatch(watchId);
@@ -73,6 +76,7 @@ const stopLocationTracking = () => {
   }
 }
 
+//Get live bus data
 async function fetchBusData() {
   try {
     const res = await fetch('/vehicles');
@@ -183,8 +187,13 @@ async function loadRoutes() {
   }
 }
 
+//Load stops from JSON files
 async function loadStops() {
   try {
+
+    const scheduleRes = await fetch('/static/trip_updates_by_stop.json');
+    stopSchedule = await scheduleRes.json();
+
     const res = await fetch('/static/stops.geojson');
     const data = await res.json();
 
@@ -199,13 +208,60 @@ async function loadStops() {
       },
       onEachFeature: (feature, layer) => {
         const stopId = feature.properties.stop_id || "Unknown";
-        layer.bindPopup(`Stop ${stopId}`);
+        const stopName = feature.properties.stop_name || "Unnamed Stop";
+
+        const nextBus = getNextArrivals(stopId);
+
+        const popupContent = `
+          <strong>Stop ID:</strong> ${stopId}<br>
+          <strong>Stop Name:</strong> ${stopName}<br><br>
+          <strong>Next Buses:</strong><br>${nextBus}
+        `;
+
+        layer.bindPopup(popupContent);
       }
     }).addTo(map);
   } catch (err) {
-    console.error("Failed to load stops:", err);
+    console.error("Failed to load stops or schedule:", err);
   }
 }
+
+let stopSchedule = {}; //Initialize empty object
+
+fetch('/static/trip_updates_by_stop.json') //Fetch stop schedule data
+  .then(res => res.json())
+  .then(data => stopSchedule = data);
+
+//Load stop schedule data
+function getNextArrivals(stop_id) {
+  const updates = stopSchedule[stop_id];
+  if (!updates || updates.length === 0) return "No live data.";
+
+  const now = Date.now() / 1000;
+  const upcoming = updates
+    .filter(entry => entry.arrival >= now)
+    .sort((a, b) => a.arrival - b.arrival)
+    .slice(0, 2);
+
+  if (upcoming.length === 0) return "No upcoming buses.";
+
+  return upcoming.map(entry => {
+    const arrivalTime = convertEpochToStandardTime(entry.arrival);
+    return `${arrivalTime} → Route ${entry.route_id}`;
+  }).join('<br>');
+}
+
+//Helper to convert epoch seconds to AM/PM format
+function convertEpochToStandardTime(epochSeconds) {
+  const date = new Date(epochSeconds * 1000);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const adjustedHours = hours % 12 || 12;
+
+  return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+}
+
 
 fetchBusData();
 setInterval(fetchBusData, fetchInterval);
