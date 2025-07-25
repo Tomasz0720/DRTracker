@@ -40,4 +40,4 @@ DRTracker is a site that uses Durham Region Transit's live vehicle location feed
 - [ ] Search for a route
 - [ ] Select which route(s) to display
 - [ ] Buses don't slide all over the map; they stick to their route
-- [ ] Click on a stop for additional information (stop number, stop name, next bus arrival)
+- [x] Click on a stop for additional information (stop number, stop name, next bus arrival)
