@@ -12,6 +12,8 @@ const fetchInterval = 5000; //5 seconds
 //Initialize user location marker and watch ID
 let userLocationMarker = null;
 let watchId = null;
+let routeList = [];
+let routeColorMap = {};
 
 //Get user's current location and start tracking
 const getUserLocation = () => {
@@ -156,18 +158,21 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+//Load route data from JSON file
+async function loadRouteData() {
+  const jsonRes = await fetch('/static/routes.json');
+  routeList = await jsonRes.json();
+  routeColorMap = {};
+  routeList.forEach(route => {
+    routeColorMap[route.id] = route.color;
+  });
+}
+
 //Load routes from JSON files
 async function loadRoutes() {
   try {
     const geoRes = await fetch('/static/routes.geojson');
-    const jsonRes = await fetch('/static/routes.json');
     const geoData = await geoRes.json();
-    const routeList = await jsonRes.json();
-
-    const routeColorMap = {};
-    routeList.forEach(route => {
-      routeColorMap[route.id] = route.color;
-    });
 
     L.geoJSON(geoData, {
       style: feature => {
@@ -190,7 +195,6 @@ async function loadRoutes() {
 //Load stops from JSON files
 async function loadStops() {
   try {
-
     const scheduleRes = await fetch('/static/trip_updates_by_stop.json');
     stopSchedule = await scheduleRes.json();
 
@@ -199,18 +203,31 @@ async function loadStops() {
 
     L.geoJSON(data, {
       pointToLayer: (feature, latlng) => {
-        return L.circleMarker(latlng, {
-          radius: 2.5,
-          color: 'black',
-          fillColor: 'black',
-          fillOpacity: 1
+        const routeId = String(feature.properties.route_id || "");
+        const outerCircle = L.circleMarker(latlng, {
+          radius: 5,
+          color: routeColorMap[routeId] || 'blue',
+          fillColor: routeColorMap[routeId] || 'blue',
+          fillOpacity: 0.5
         });
+
+        const innerCircle = L.circleMarker(latlng, {
+          radius: 2,
+          color: 'white',
+          fillColor: 'white',
+          fillOpacity: 1,
+          weight: 1
+        });
+
+        const group = L.featureGroup([outerCircle, innerCircle]);
+        return group;
+
       },
       onEachFeature: (feature, layer) => {
         const stopId = feature.properties.stop_id || "Unknown";
         const stopName = feature.properties.stop_name || "Unnamed Stop";
 
-        const nextBus = getNextArrivals(stopId);
+        const nextBus = getNextArrivals(stopId) || "No upcoming buses.";
 
         const popupContent = `
           <strong>Stop ID:</strong> ${stopId}<br>
@@ -226,29 +243,87 @@ async function loadStops() {
   }
 }
 
-let stopSchedule = {}; //Initialize empty object
+
+let stopSchedule = {}; //Initialize empty object for live stop schedule
+let staticStopSchedule = {}; //Initialize empty object for static schedule
+
+fetch('/static/stop_schedule.json') //Fetch static stop schedule data
+  .then(res => res.json())
+  .then(data => staticStopSchedule = data);
 
 fetch('/static/trip_updates_by_stop.json') //Fetch stop schedule data
   .then(res => res.json())
   .then(data => stopSchedule = data);
 
+//Load bus schedule data
+async function loadBusSchedule() {
+  try {
+    const res = await fetch('/static/trip_updates_by_stop.json');
+    stopSchedule = await res.json();
+    console.log("Stop schedule loaded:", stopSchedule);
+  } catch (err) {
+    console.error("Failed to load bus schedule data:", err);
+  }
+}
+
 //Load stop schedule data
 function getNextArrivals(stop_id) {
   const updates = stopSchedule[stop_id];
-  if (!updates || updates.length === 0) return "No live data.";
 
-  const now = Date.now() / 1000;
-  const upcoming = updates
-    .filter(entry => entry.arrival >= now)
-    .sort((a, b) => a.arrival - b.arrival)
-    .slice(0, 2);
+  // Check for live updates
+  if (Array.isArray(updates) && updates.length > 0) {
+    const now = Date.now() / 1000; // Current time in epoch seconds
+    const upcoming = updates
+      .filter(entry => entry.arrival >= now) // Only future arrivals
+      .sort((a, b) => a.arrival - b.arrival) // Sort by arrival time
+      .slice(0, 2); // Get the next 2 arrivals
 
-  if (upcoming.length === 0) return "No upcoming buses.";
+    if (upcoming.length > 0) {
+      return upcoming.map(entry => {
+        const arrivalTime = convertEpochToStandardTime(entry.arrival);
+        return `${arrivalTime} → Route ${entry.route_id}`;
+      }).join('<br>');
+    }
+  }
 
-  return upcoming.map(entry => {
-    const arrivalTime = convertEpochToStandardTime(entry.arrival);
-    return `${arrivalTime} → Route ${entry.route_id}`;
-  }).join('<br>');
+  // Fallback to static schedule
+  const staticUpdates = staticStopSchedule[stop_id];
+  if (Array.isArray(staticUpdates) && staticUpdates.length > 0) {
+    const now = new Date();
+    const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+    const upcoming = staticUpdates
+      .map(entry => ({
+        ...entry,
+        seconds: parseTimeToSeconds(entry.arrival_time)
+      }))
+      .filter(entry => entry.seconds >= nowSeconds) // Only future arrivals
+      .sort((a, b) => a.seconds - b.seconds) // Sort by arrival time
+      .slice(0, 2); // Get the next 2 arrivals
+
+    if (upcoming.length > 0) {
+      return upcoming.map(entry => {
+        const arrivalTime = convertTimeToStandard(entry.arrival_time);
+        return `${arrivalTime} → Route ${entry.route_id}`;
+      }).join('<br>');
+    }
+  }
+
+  return "No schedule available for this stop.";
+}
+
+// Helper to parse "HH:MM:SS" time format to seconds
+function parseTimeToSeconds(timeStr) {
+  const [h, m, s] = timeStr.split(':').map(Number);
+  return h * 3600 + m * 60 + (s || 0);
+}
+
+// Helper to convert "HH:MM" time format to AM/PM format
+function convertTimeToStandard(timeStr) {
+  const [h, m] = timeStr.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const adjustedHours = h % 12 || 12;
+  return `${adjustedHours}:${m.toString().padStart(2, '0')} ${ampm}`;
 }
 
 //Helper to convert epoch seconds to AM/PM format
@@ -262,10 +337,27 @@ function convertEpochToStandardTime(epochSeconds) {
   return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 }
 
+// Helper to get service ID based on date
+function getServiceIdForDate(date) {
+  const hour = date.getHours();
+  const day = date.getDay(); // 0=Sunday, 6=Saturday
 
-fetchBusData();
-setInterval(fetchBusData, fetchInterval);
-animate();
-loadRoutes();
-loadStops();
-getUserLocation();
+  if (hour < 5) {
+    return "Overnight";
+  }
+
+  if (day === 0) return "Sunday";
+  if (day === 6) return "Saturday";
+  return "Weekday";
+}
+
+
+(async () => {
+  await loadRouteData();
+  loadRoutes();
+  loadStops();
+  fetchBusData();
+  setInterval(fetchBusData, fetchInterval);
+  animate();
+  getUserLocation();
+})();
