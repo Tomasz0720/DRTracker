@@ -26,7 +26,7 @@ DRTracker is a site that uses Durham Region Transit's live vehicle location feed
 3. Navigate to the project folder and open it in your preferred IDE that supports Python.
 
 4. Open a terminal and install prerequisites using
-   '''bash
+   ```bash
    pip install -r requirements.txt
 
 6. Run `server.py`
