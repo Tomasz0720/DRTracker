@@ -33,8 +33,6 @@ DRTracker is a site that uses Durham Region Transit's live vehicle location feed
 
 7. Go to `http://127.0.0.1:5000/` in your browser to view a map with real-time bus locations, stops, and routes.
 
-8. Go to `http://127.0.0.1:5000/vehicles` in your browser to view the input log of vehicles and their metadata.
-
 ## Future Features
 - [x] Improved GeoJSON map data
 - [x] Click on a stop for additional information (stop number, stop name, next bus arrival)
