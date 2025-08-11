@@ -33,6 +33,20 @@ DRTracker is a site that uses Durham Region Transit's live vehicle location feed
 
 7. Go to `http://127.0.0.1:5000/` in your browser to view a map with real-time bus locations, stops, and routes.
 
+## Demo Screenshots
+
+| ![](/assets/blank_map.png) | ![](/assets/route_selector.png) |
+|----------------------------|---------------------------------|
+| *User view before a route(s) is selected.* | *Route selector multi-select dropdown.* |
+
+| ![](/assets/route_900.png) | ![](/assets/next_bus_900.png) |
+|----------------------------|------------------------------|
+| *Map with DRT Route 900 visible.* | *DRT Route 900 stop with next bus bubble.* |
+
+| ![](/assets/routes_405_900_905.png) | ![](/assets/next_bus_405.png) |
+|-------------------------------------|-------------------------------|
+| *DRT Routes 405, 900, and 905 visible.* | *DRT Route 405 stop with next bus bubble.* |
+
 ## Future Features
 - [x] Improved GeoJSON map data
 - [x] Click on a stop for additional information (stop number, stop name, next bus arrival)
