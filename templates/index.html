@@ -4,6 +4,9 @@
         <title>DRT Bus Tracker</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <style>
             html, body{
                 margin: 0;
@@ -12,14 +15,40 @@
             }
             #map{
                 height: 100vh;
+                width: 100vw;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
+            #route-select {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                z-index: 1000;
+                background: white;
+                border-radius: 6px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+                padding: 8px;
+                width: 300px;
+            }
+            
+            .select2-container {
+                z-index: 1001 !important;
+            }
+            
+            .select2-dropdown {
+                z-index: 1002 !important;
             }
         </style>
     </head>
 
     <body>
         <div id="map"></div>
+        <select id="route-select" multiple="multiple"></select>
         
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="{{ url_for('static', filename='main.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
     </body>
 </html>
