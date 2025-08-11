@@ -13,8 +13,7 @@
 ![Leaflet](https://img.shields.io/badge/Leaflet.js-map-green)
 
 ### Description
-DRTracker is a site that uses Durham Region Transit's live vehicle location feed to track buses in real time.
-
+DRTracker processes GTFS and GTFS-RT data to create a live map displaying real-time bus positions and estimated arrival times for Durham Region Transit.
 
 ### How to Run
 1. Clone the repository by selecting the green **code** button in GitHub, and copying the repository link.
